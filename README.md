@@ -1,4 +1,4 @@
-# JavaGuideApp
+# JavaGuideHTML
 Disclaimer: AI Generated, solely purpose is for a "programmer dictionary". 
 
 Runs standalone program ans website 
