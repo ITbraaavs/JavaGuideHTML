@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Java Guide — Complete Programmer's Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0d0f14; --bg2:#13161e; --bg3:#1a1e28; --bg4:#20253200;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#e8eaf0; --muted:#6b7280;
+  --accent:#f97316; --blue:#60a5fa; --green:#4ade80;
+  --purple:#a78bfa; --pink:#f472b6; --teal:#2dd4bf;
+  --yellow:#facc15; --red:#f87171;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+#app{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:270px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;transition:transform 0.3s;}
+.sb-logo{padding:22px 20px 14px;border-bottom:1px solid var(--border);}
+.sb-mark{font-size:10px;letter-spacing:.2em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:3px;}
+.sb-title{font-size:19px;font-weight:800;line-height:1.1;}
+.sb-title span{color:var(--accent);}
+.sb-search{padding:12px 14px;border-bottom:1px solid var(--border);}
+.sb-search input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:13px;color:var(--text);font-family:'Syne',sans-serif;outline:none;transition:border-color .2s;}
+.sb-search input:focus{border-color:var(--accent);}
+.sb-search input::placeholder{color:var(--muted);}
+.sb-nav{flex:1;padding:6px 0 20px;}
+.sb-section{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;font-weight:700;padding:14px 20px 4px;}
+.sb-item{padding:8px 20px;font-size:13px;cursor:pointer;color:var(--muted);transition:all .15s;display:flex;align-items:center;gap:9px;border-left:2px solid transparent;}
+.sb-item:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.sb-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(249,115,22,0.06);font-weight:500;}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-cnt{margin-left:auto;font-size:11px;background:var(--bg3);padding:2px 7px;border-radius:99px;color:var(--muted);}
+
+/* MAIN */
+.main{margin-left:270px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:18px 30px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.tb-title{font-size:20px;font-weight:800;}
+.tb-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.tb-right{display:flex;gap:8px;align-items:center;}
+.vbtn{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:6px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;transition:all .15s;font-weight:500;}
+.vbtn.active,.vbtn:hover{color:var(--accent);border-color:var(--accent);}
+.menu-toggle{display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 11px;color:var(--text);cursor:pointer;font-size:17px;}
+
+.content{padding:26px 30px;flex:1;}
+
+/* STATS */
+.stats{display:flex;gap:12px;margin-bottom:26px;flex-wrap:wrap;}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px 18px;}
+.stat-v{font-size:21px;font-weight:800;}
+.stat-l{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* SECTION HEADER */
+.sec-hdr{margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;}
+.sec-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.sec-name{font-size:17px;font-weight:700;}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:36px;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s,transform .15s;cursor:pointer;}
+.card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.card.open{border-color:var(--accent);}
+.card-top{padding:14px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.card-code{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;}
+.card-tag{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
+.card-desc{padding:0 16px 12px;font-size:13px;color:var(--muted);line-height:1.6;}
+.card-body{padding:0 16px 14px;display:none;}
+.card.open .card-body{display:block;}
+.lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:5px;margin-top:10px;}
+.lbl:first-child{margin-top:0;}
+.codeblock{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:13px 15px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.85;color:#c9d1d9;overflow-x:auto;white-space:pre;}
+.outblock{background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.18);border-radius:8px;padding:9px 13px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--green);line-height:1.7;white-space:pre;}
+.card-foot{border-top:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;justify-content:space-between;}
+.tog{font-size:12px;color:var(--accent);cursor:pointer;font-family:'Syne',sans-serif;font-weight:500;background:none;border:none;display:flex;align-items:center;gap:4px;}
+.arr{transition:transform .2s;display:inline-block;}
+.card.open .arr{transform:rotate(180deg);}
+
+/* PROGRAMS */
+.prog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;margin-bottom:36px;}
+.prog-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s;}
+.prog-card:hover{border-color:var(--border2);}
+.prog-card.open{border-color:var(--accent);}
+.prog-head{padding:16px 18px;cursor:pointer;}
+.prog-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;}
+.prog-name{font-size:14px;font-weight:700;}
+.prog-diff{font-size:10px;padding:2px 9px;border-radius:99px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+.diff-beg{background:rgba(74,222,128,0.12);color:#4ade80;}
+.diff-int{background:rgba(250,204,21,0.12);color:#facc15;}
+.diff-adv{background:rgba(249,115,22,0.12);color:#f97316;}
+.prog-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.prog-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.prog-tag{font-size:10px;padding:2px 8px;border-radius:99px;background:var(--bg3);color:var(--muted);border:1px solid var(--border);}
+.prog-body{display:none;padding:0 18px 16px;}
+.prog-card.open .prog-body{display:block;}
+.prog-what{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent);}
+.copy-btn{font-size:11px;padding:5px 12px;border-radius:7px;background:var(--bg3);border:1px solid var(--border2);color:var(--muted);cursor:pointer;font-family:'Syne',sans-serif;transition:all .15s;float:right;margin-bottom:6px;}
+.copy-btn:hover{color:var(--accent);border-color:var(--accent);}
+.copy-btn.copied{color:var(--green);border-color:var(--green);}
+
+/* TABLE */
+.tbl-wrap{margin-bottom:36px;overflow-x:auto;}
+table.ref{width:100%;border-collapse:collapse;min-width:600px;}
+table.ref th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:9px 13px;border-bottom:1px solid var(--border2);text-align:left;font-weight:600;}
+table.ref td{padding:10px 13px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:top;}
+table.ref td:first-child{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;}
+table.ref tr:hover td{background:rgba(255,255,255,0.02);}
+table.ref tr:last-child td{border-bottom:none;}
+
+/* NO RESULTS */
+.nores{text-align:center;padding:50px 20px;color:var(--muted);font-size:14px;}
+
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+.overlay.show{display:block;}
+
+/* SYNTAX COLORS */
+.kw{color:#f97316;} .str{color:#4ade80;} .cm{color:#6b7280;font-style:italic;}
+.num{color:#60a5fa;} .fn{color:#a78bfa;} .cls{color:#2dd4bf;} .op{color:#f472b6;}
+.ann{color:#facc15;}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .menu-toggle{display:block;}
+  .content{padding:18px 14px;}
+  .topbar{padding:13px 14px;}
+  .grid,.prog-grid{grid-template-columns:1fr;}
+  .stats{gap:8px;}
+  .overlay.show{display:block;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">&#9650; Programmer's Guide</div>
+    <div class="sb-title">Java<span>Guide</span></div>
+  </div>
+  <div class="sb-search">
+    <input type="text" id="srch" placeholder="Search anything..." oninput="doSearch()"/>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<div class="overlay" id="overlay" onclick="closeSB()"></div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" onclick="openSB()">&#9776;</button>
+      <div>
+        <div class="tb-title" id="tbTitle">Welcome</div>
+        <div class="tb-meta" id="tbMeta"></div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <button class="vbtn active" id="btnRef" onclick="setMode('ref')">&#9632; Reference</button>
+      <button class="vbtn" id="btnProg" onclick="setMode('prog')">&#10095; Programs</button>
+      <button class="vbtn" id="btnTbl" onclick="setMode('tbl')">&#9776; Table</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stats" id="statsBar"></div>
+    <div id="refView"></div>
+    <div id="progView" style="display:none"></div>
+    <div id="tblView" style="display:none"></div>
+  </div>
+</main>
+</div>
+
+<script>
+/* ===== DATA ===== */
+const REF = [
+  { id:"imports", name:"Imports & Packages", color:"#c084fc", tBg:"rgba(192,132,252,0.12)", tC:"#c084fc", items:[
+    {code:"import",       desc:"Imports a specific class from a package.",
+     syn:`<span class="kw">import</span> java.util.<span class="cls">Scanner</span>;\n<span class="kw">import</span> java.util.<span class="cls">ArrayList</span>;\n\n<span class="kw">public class</span> <span class="cls">Main</span> {\n    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {\n        <span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(<span class="cls">System</span>.in);\n        <span class="cls">ArrayList</span>&lt;<span class="cls">String</span>&gt; list = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Imported!"</span>);\n    }\n}`, out:"Imported!"},
+    {code:"import wildcard (*)",desc:"Imports all classes from a package at once.",
+     syn:`<span class="kw">import</span> java.util.*;   <span class="cm">// imports ALL classes in java.util</span>\n\n<span class="kw">public class</span> <span class="cls">Main</span> {\n    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {\n        <span class="cls">ArrayList</span>&lt;<span class="cls">String</span>&gt; a = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();\n        <span class="cls">HashMap</span>&lt;<span class="cls">String</span>,<span class="cls">Integer</span>&gt; m = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"All util imported"</span>);\n    }\n}`, out:"All util imported"},
+    {code:"import static", desc:"Imports static members so you can use them without class name.",
+     syn:`<span class="kw">import static</span> java.lang.<span class="cls">Math</span>.PI;\n<span class="kw">import static</span> java.lang.<span class="cls">Math</span>.sqrt;\n<span class="kw">import static</span> java.lang.<span class="cls">Math</span>.pow;\n\n<span class="kw">public class</span> <span class="cls">Main</span> {\n    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="cls">String</span>[] args) {\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(PI);          <span class="cm">// no Math. needed</span>\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="fn">sqrt</span>(<span class="num">144</span>));  <span class="cm">// no Math. needed</span>\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="fn">pow</span>(<span class="num">2</span>,<span class="num">10</span>));  <span class="cm">// no Math. needed</span>\n    }\n}`, out:"3.141592653589793\n12.0\n1024.0"},
+    {code:"package",      desc:"Declares which package this class belongs to.",
+     syn:`<span class="kw">package</span> com.myapp.models;  <span class="cm">// must be FIRST line</span>\n\n<span class="kw">public class</span> <span class="cls">User</span> {\n    <span class="cls">String</span> name;\n    <span class="cls">User</span>(<span class="cls">String</span> name) { <span class="kw">this</span>.name = name; }\n}\n<span class="cm">// File must be at: com/myapp/models/User.java</span>`, out:"(organizes classes into folders)"},
+    {code:"java.util.*",  desc:"Collections, Scanner, Date, Random, etc.",
+     syn:`<span class="kw">import</span> java.util.<span class="cls">Scanner</span>;     <span class="cm">// user input</span>\n<span class="kw">import</span> java.util.<span class="cls">ArrayList</span>;   <span class="cm">// dynamic list</span>\n<span class="kw">import</span> java.util.<span class="cls">HashMap</span>;     <span class="cm">// key-value map</span>\n<span class="kw">import</span> java.util.<span class="cls">Arrays</span>;      <span class="cm">// array utilities</span>\n<span class="kw">import</span> java.util.<span class="cls">Collections</span>; <span class="cm">// sort, reverse, etc.</span>\n<span class="kw">import</span> java.util.<span class="cls">Random</span>;      <span class="cm">// random numbers</span>\n<span class="kw">import</span> java.util.<span class="cls">Date</span>;        <span class="cm">// date/time</span>`, out:"(commonly used imports)"},
+    {code:"java.io.*",    desc:"File reading/writing — FileWriter, BufferedReader, etc.",
+     syn:`<span class="kw">import</span> java.io.<span class="cls">File</span>;             <span class="cm">// file reference</span>\n<span class="kw">import</span> java.io.<span class="cls">FileWriter</span>;       <span class="cm">// write to file</span>\n<span class="kw">import</span> java.io.<span class="cls">FileReader</span>;       <span class="cm">// read from file</span>\n<span class="kw">import</span> java.io.<span class="cls">BufferedReader</span>;   <span class="cm">// efficient reading</span>\n<span class="kw">import</span> java.io.<span class="cls">BufferedWriter</span>;   <span class="cm">// efficient writing</span>\n<span class="kw">import</span> java.io.<span class="cls">IOException</span>;     <span class="cm">// file error handling</span>`, out:"(file I/O imports)"},
+    {code:"java.lang.*",  desc:"Auto-imported. String, Math, System, Integer, etc.",
+     syn:`<span class="cm">// java.lang is ALWAYS imported automatically</span>\n<span class="cm">// You never need to write: import java.lang.*;</span>\n\n<span class="cm">// These are all from java.lang:</span>\n<span class="cls">String</span> s = <span class="str">"auto"</span>;\n<span class="kw">int</span> n = <span class="cls">Integer</span>.<span class="fn">parseInt</span>(<span class="str">"42"</span>);\n<span class="kw">double</span> r = <span class="cls">Math</span>.<span class="fn">sqrt</span>(<span class="num">16</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(s + <span class="str">" "</span> + n + <span class="str">" "</span> + r);`, out:"auto 42 4.0"},
+    {code:"java.time.*",  desc:"Modern date/time API (Java 8+).",
+     syn:`<span class="kw">import</span> java.time.<span class="cls">LocalDate</span>;\n<span class="kw">import</span> java.time.<span class="cls">LocalTime</span>;\n<span class="kw">import</span> java.time.<span class="cls">LocalDateTime</span>;\n<span class="kw">import</span> java.time.format.<span class="cls">DateTimeFormatter</span>;\n\n<span class="cls">LocalDate</span> today = <span class="cls">LocalDate</span>.<span class="fn">now</span>();\n<span class="cls">LocalTime</span> now = <span class="cls">LocalTime</span>.<span class="fn">now</span>();\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Date: "</span> + today);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Time: "</span> + now);`, out:"Date: 2026-03-25\nTime: 15:47:30.123"},
+  ]},
+  { id:"types", name:"Data types & variables", color:"#a78bfa", tBg:"rgba(167,139,250,0.13)", tC:"#a78bfa", items:[
+    {code:"int",         desc:"Whole number (-2B to 2B).",
+     syn:`<span class="kw">int</span> age = <span class="num">25</span>;\n<span class="kw">int</span> score = <span class="num">100</span>;\n<span class="kw">int</span> sum = age + score;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(sum);`, out:"125"},
+    {code:"double",      desc:"Decimal number (64-bit precision).",
+     syn:`<span class="kw">double</span> price = <span class="num">9.99</span>;\n<span class="kw">double</span> tax = price * <span class="num">0.12</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(price + tax);`, out:"11.1888"},
+    {code:"float",       desc:"Decimal number (32-bit). Append f.",
+     syn:`<span class="kw">float</span> temp = <span class="num">36.6f</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(temp);`, out:"36.6"},
+    {code:"long",        desc:"Large whole number. Append L.",
+     syn:`<span class="kw">long</span> population = <span class="num">8000000000L</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(population);`, out:"8000000000"},
+    {code:"boolean",     desc:"True or false only.",
+     syn:`<span class="kw">boolean</span> isActive = <span class="kw">true</span>;\n<span class="kw">boolean</span> isAdmin = <span class="kw">false</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(isActive && !isAdmin);`, out:"true"},
+    {code:"char",        desc:"Single character. Use single quotes.",
+     syn:`<span class="kw">char</span> grade = <span class="str">'A'</span>;\n<span class="kw">char</span> symbol = <span class="str">'@'</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(grade);`, out:"A"},
+    {code:"String",      desc:"Text sequence. Use double quotes.",
+     syn:`<span class="cls">String</span> first = <span class="str">"Maria"</span>;\n<span class="cls">String</span> last = <span class="str">"Cruz"</span>;\n<span class="cls">String</span> full = first + <span class="str">" "</span> + last;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(full);`, out:"Maria Cruz"},
+    {code:"var",         desc:"Type inferred automatically (Java 10+).",
+     syn:`<span class="kw">var</span> count = <span class="num">10</span>;       <span class="cm">// int</span>\n<span class="kw">var</span> name = <span class="str">"Java"</span>;   <span class="cm">// String</span>\n<span class="kw">var</span> pi = <span class="num">3.14</span>;       <span class="cm">// double</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(name + <span class="str">" v"</span> + count);`, out:"Java v10"},
+  ]},
+  { id:"ops", name:"Operators", color:"#e879f9", tBg:"rgba(232,121,249,0.12)", tC:"#e879f9", items:[
+    {code:"Arithmetic (+, -, *, /, %)",desc:"Basic math operations.",
+     syn:`<span class="kw">int</span> a = <span class="num">17</span>, b = <span class="num">5</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a + b);   <span class="cm">// 22</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a - b);   <span class="cm">// 12</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a * b);   <span class="cm">// 85</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a / b);   <span class="cm">// 3 (int division)</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a % b);   <span class="cm">// 2 (remainder)</span>`, out:"22\n12\n85\n3\n2"},
+    {code:"Comparison (==, !=, <, >, <=, >=)",desc:"Compares two values, returns boolean.",
+     syn:`<span class="kw">int</span> x = <span class="num">10</span>, y = <span class="num">20</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(x == y);  <span class="cm">// false</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(x != y);  <span class="cm">// true</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(x < y);   <span class="cm">// true</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(x >= <span class="num">10</span>); <span class="cm">// true</span>`, out:"false\ntrue\ntrue\ntrue"},
+    {code:"Logical (&&, ||, !)",desc:"Combines boolean conditions.",
+     syn:`<span class="kw">boolean</span> a = <span class="kw">true</span>, b = <span class="kw">false</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a && b);  <span class="cm">// false (both must be true)</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a || b);  <span class="cm">// true  (one must be true)</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(!a);      <span class="cm">// false (opposite)</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(!b);      <span class="cm">// true</span>`, out:"false\ntrue\nfalse\ntrue"},
+    {code:"Assignment (=, +=, -=, *=, /=)",desc:"Assigns and updates values.",
+     syn:`<span class="kw">int</span> x = <span class="num">10</span>;\nx += <span class="num">5</span>;   <span class="cm">// x = x + 5 → 15</span>\nx -= <span class="num">3</span>;   <span class="cm">// x = x - 3 → 12</span>\nx *= <span class="num">2</span>;   <span class="cm">// x = x * 2 → 24</span>\nx /= <span class="num">4</span>;   <span class="cm">// x = x / 4 → 6</span>\nx %= <span class="num">4</span>;   <span class="cm">// x = x % 4 → 2</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(x);`, out:"2"},
+    {code:"Increment / Decrement (++, --)",desc:"Adds or subtracts 1.",
+     syn:`<span class="kw">int</span> a = <span class="num">5</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a++);  <span class="cm">// prints 5, THEN a becomes 6</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a);    <span class="cm">// 6</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(++a);  <span class="cm">// a becomes 7, THEN prints 7</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a--);  <span class="cm">// prints 7, THEN a becomes 6</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(a);    <span class="cm">// 6</span>`, out:"5\n6\n7\n7\n6"},
+    {code:"Ternary (? :)",  desc:"Shorthand if-else in one line.",
+     syn:`<span class="kw">int</span> age = <span class="num">20</span>;\n<span class="cls">String</span> status = (age >= <span class="num">18</span>) ? <span class="str">"Adult"</span> : <span class="str">"Minor"</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(status);\n\n<span class="kw">int</span> x = <span class="num">10</span>, y = <span class="num">20</span>;\n<span class="kw">int</span> max = (x > y) ? x : y;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Max: "</span> + max);`, out:"Adult\nMax: 20"},
+    {code:"instanceof",     desc:"Checks if an object is a certain type.",
+     syn:`<span class="cls">Object</span> obj = <span class="str">"Hello"</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(obj <span class="kw">instanceof</span> <span class="cls">String</span>);   <span class="cm">// true</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(obj <span class="kw">instanceof</span> <span class="cls">Integer</span>);  <span class="cm">// false</span>\n\n<span class="cls">Object</span> num = <span class="num">42</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(num <span class="kw">instanceof</span> <span class="cls">Integer</span>); <span class="cm">// true</span>`, out:"true\nfalse\ntrue"},
+  ]},
+  { id:"flow", name:"Control flow", color:"#4ade80", tBg:"rgba(74,222,128,0.12)", tC:"#4ade80", items:[
+    {code:"if / else if / else", desc:"Runs code based on a condition.",
+     syn:`<span class="kw">int</span> score = <span class="num">85</span>;\n<span class="kw">if</span> (score >= <span class="num">90</span>) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"A"</span>);\n} <span class="kw">else if</span> (score >= <span class="num">80</span>) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"B"</span>);\n} <span class="kw">else</span> {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"C"</span>);\n}`, out:"B"},
+    {code:"switch",      desc:"Selects a block based on a value.",
+     syn:`<span class="kw">int</span> day = <span class="num">2</span>;\n<span class="kw">switch</span> (day) {\n    <span class="kw">case</span> <span class="num">1</span>: <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Mon"</span>); <span class="kw">break</span>;\n    <span class="kw">case</span> <span class="num">2</span>: <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Tue"</span>); <span class="kw">break</span>;\n    <span class="kw">default</span>: <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Other"</span>);\n}`, out:"Tue"},
+    {code:"break",       desc:"Exits a loop or switch immediately.",
+     syn:`<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) {\n    <span class="kw">if</span> (i == <span class="num">3</span>) <span class="kw">break</span>;\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(i);\n}`, out:"0\n1\n2"},
+    {code:"continue",    desc:"Skips the current iteration.",
+     syn:`<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">5</span>; i++) {\n    <span class="kw">if</span> (i == <span class="num">2</span>) <span class="kw">continue</span>;\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(i);\n}`, out:"0\n1\n3\n4"},
+    {code:"return",      desc:"Exits a method and returns a value.",
+     syn:`<span class="kw">public static int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {\n    <span class="kw">return</span> a + b;\n}\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>));`, out:"7"},
+    {code:"System.exit()",desc:"Terminates the entire program immediately.",
+     syn:`<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Starting..."</span>);\n\n<span class="kw">boolean</span> fatalError = <span class="kw">true</span>;\n<span class="kw">if</span> (fatalError) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Fatal error! Shutting down."</span>);\n    <span class="cls">System</span>.<span class="fn">exit</span>(<span class="num">1</span>);  <span class="cm">// 0 = normal, 1 = error</span>\n}\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"This never runs"</span>);`, out:"Starting...\nFatal error! Shutting down."},
+    {code:"Exit codes",   desc:"0 = success, non-zero = error. Convention for program status.",
+     syn:`<span class="cm">// Exit code 0 → program ran successfully</span>\n<span class="cls">System</span>.<span class="fn">exit</span>(<span class="num">0</span>);\n\n<span class="cm">// Exit code 1 → general error</span>\n<span class="cls">System</span>.<span class="fn">exit</span>(<span class="num">1</span>);\n\n<span class="cm">// Custom exit codes for different errors</span>\n<span class="kw">final int</span> ERR_FILE = <span class="num">2</span>;\n<span class="kw">final int</span> ERR_NET  = <span class="num">3</span>;\n<span class="cls">System</span>.<span class="fn">exit</span>(ERR_FILE);  <span class="cm">// file error</span>`, out:"(terminates JVM with status code)"},
+    {code:"Labeled break",desc:"Breaks out of nested loops using a label.",
+     syn:`<span class="fn">outer</span>:\n<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < <span class="num">3</span>; i++) {\n    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j < <span class="num">3</span>; j++) {\n        <span class="kw">if</span> (i == <span class="num">1</span> && j == <span class="num">1</span>) <span class="kw">break</span> <span class="fn">outer</span>;\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(i + <span class="str">","</span> + j);\n    }\n}`, out:"0,0\n0,1\n0,2\n1,0"},
+  ]},
+  { id:"loops", name:"Loops", color:"#f97316", tBg:"rgba(249,115,22,0.12)", tC:"#f97316", items:[
+    {code:"for",         desc:"Repeats a set number of times.",
+     syn:`<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i <= <span class="num">5</span>; i++) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Step "</span> + i);\n}`, out:"Step 1\nStep 2\nStep 3\nStep 4\nStep 5"},
+    {code:"while",       desc:"Loops while a condition is true.",
+     syn:`<span class="kw">int</span> x = <span class="num">1</span>;\n<span class="kw">while</span> (x <= <span class="num">3</span>) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"x = "</span> + x);\n    x++;\n}`, out:"x = 1\nx = 2\nx = 3"},
+    {code:"do...while",  desc:"Runs at least once, then checks condition.",
+     syn:`<span class="kw">int</span> n = <span class="num">1</span>;\n<span class="kw">do</span> {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"n = "</span> + n);\n    n++;\n} <span class="kw">while</span> (n <= <span class="num">3</span>);`, out:"n = 1\nn = 2\nn = 3"},
+    {code:"for-each",    desc:"Iterates over every element in a collection.",
+     syn:`<span class="cls">String</span>[] langs = {<span class="str">"Java"</span>, <span class="str">"Python"</span>, <span class="str">"C++"</span>};\n<span class="kw">for</span> (<span class="cls">String</span> lang : langs) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(lang);\n}`, out:"Java\nPython\nC++"},
+  ]},
+  { id:"oop", name:"OOP", color:"#2dd4bf", tBg:"rgba(45,212,191,0.12)", tC:"#2dd4bf", items:[
+    {code:"class",       desc:"Blueprint for creating objects.",
+     syn:`<span class="kw">class</span> <span class="cls">Dog</span> {\n    <span class="cls">String</span> name;\n    <span class="kw">int</span> age;\n    <span class="kw">void</span> <span class="fn">bark</span>() {\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(name + <span class="str">" says: Woof!"</span>);\n    }\n}`, out:"(class defined)"},
+    {code:"new",         desc:"Creates an instance of a class.",
+     syn:`<span class="cls">Dog</span> d = <span class="kw">new</span> <span class="cls">Dog</span>();\nd.name = <span class="str">"Rex"</span>;\nd.age = <span class="num">3</span>;\nd.<span class="fn">bark</span>();`, out:"Rex says: Woof!"},
+    {code:"constructor", desc:"Runs automatically when an object is created.",
+     syn:`<span class="kw">class</span> <span class="cls">Car</span> {\n    <span class="cls">String</span> brand;\n    <span class="kw">int</span> year;\n    <span class="cls">Car</span>(<span class="cls">String</span> b, <span class="kw">int</span> y) {\n        brand = b; year = y;\n    }\n}\n<span class="cls">Car</span> c = <span class="kw">new</span> <span class="cls">Car</span>(<span class="str">"Toyota"</span>, <span class="num">2024</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(c.brand + <span class="str">" "</span> + c.year);`, out:"Toyota 2024"},
+    {code:"this",        desc:"Refers to the current object.",
+     syn:`<span class="kw">class</span> <span class="cls">Person</span> {\n    <span class="cls">String</span> name;\n    <span class="cls">Person</span>(<span class="cls">String</span> name) {\n        <span class="kw">this</span>.name = name; <span class="cm">// field = param</span>\n    }\n}`, out:"(disambiguates fields)"},
+    {code:"extends",     desc:"Inherits from a parent class.",
+     syn:`<span class="kw">class</span> <span class="cls">Animal</span> {\n    <span class="kw">void</span> <span class="fn">breathe</span>() { <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Breathing"</span>); }\n}\n<span class="kw">class</span> <span class="cls">Cat</span> <span class="kw">extends</span> <span class="cls">Animal</span> {\n    <span class="kw">void</span> <span class="fn">meow</span>() { <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Meow!"</span>); }\n}\n<span class="cls">Cat</span> c = <span class="kw">new</span> <span class="cls">Cat</span>();\nc.<span class="fn">breathe</span>(); c.<span class="fn">meow</span>();`, out:"Breathing\nMeow!"},
+    {code:"super",       desc:"Calls the parent class constructor or method.",
+     syn:`<span class="kw">class</span> <span class="cls">Animal</span> {\n    <span class="cls">Animal</span>(<span class="cls">String</span> n) { <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Animal: "</span>+n); }\n}\n<span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {\n    <span class="cls">Dog</span>() { <span class="kw">super</span>(<span class="str">"Rex"</span>); }\n}\n<span class="kw">new</span> <span class="cls">Dog</span>();`, out:"Animal: Rex"},
+    {code:"interface",   desc:"Contract that classes must implement.",
+     syn:`<span class="kw">interface</span> <span class="cls">Drawable</span> {\n    <span class="kw">void</span> <span class="fn">draw</span>();\n}\n<span class="kw">class</span> <span class="cls">Circle</span> <span class="kw">implements</span> <span class="cls">Drawable</span> {\n    <span class="kw">public void</span> <span class="fn">draw</span>() {\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Drawing circle"</span>);\n    }\n}\n<span class="kw">new</span> <span class="cls">Circle</span>().<span class="fn">draw</span>();`, out:"Drawing circle"},
+    {code:"abstract",    desc:"Class/method with no complete implementation.",
+     syn:`<span class="kw">abstract class</span> <span class="cls">Shape</span> {\n    <span class="kw">abstract double</span> <span class="fn">area</span>();\n    <span class="kw">void</span> <span class="fn">describe</span>() {\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Area: "</span> + <span class="fn">area</span>());\n    }\n}\n<span class="kw">class</span> <span class="cls">Rect</span> <span class="kw">extends</span> <span class="cls">Shape</span> {\n    <span class="kw">double</span> <span class="fn">area</span>() { <span class="kw">return</span> <span class="num">5</span> * <span class="num">3</span>; }\n}\n<span class="kw">new</span> <span class="cls">Rect</span>().<span class="fn">describe</span>();`, out:"Area: 15.0"},
+    {code:"@Override",   desc:"Redefines a method from the parent class.",
+     syn:`<span class="kw">class</span> <span class="cls">Animal</span> {\n    <span class="cls">String</span> <span class="fn">sound</span>() { <span class="kw">return</span> <span class="str">"..."</span>; }\n}\n<span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {\n    <span class="ann">@Override</span>\n    <span class="cls">String</span> <span class="fn">sound</span>() { <span class="kw">return</span> <span class="str">"Woof"</span>; }\n}\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="kw">new</span> <span class="cls">Dog</span>().<span class="fn">sound</span>());`, out:"Woof"},
+  ]},
+  { id:"mods", name:"Modifiers", color:"#f472b6", tBg:"rgba(244,114,182,0.12)", tC:"#f472b6", items:[
+    {code:"public",      desc:"Accessible from anywhere.",
+     syn:`<span class="kw">public class</span> <span class="cls">Greeter</span> {\n    <span class="kw">public static void</span> <span class="fn">greet</span>(<span class="cls">String</span> name) {\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Hello, "</span> + name + <span class="str">"!"</span>);\n    }\n}\n<span class="cls">Greeter</span>.<span class="fn">greet</span>(<span class="str">"World"</span>);`, out:"Hello, World!"},
+    {code:"private",     desc:"Accessible only within the same class.",
+     syn:`<span class="kw">class</span> <span class="cls">BankAccount</span> {\n    <span class="kw">private double</span> balance = <span class="num">1000.0</span>;\n    <span class="kw">public double</span> <span class="fn">getBalance</span>() {\n        <span class="kw">return</span> balance;\n    }\n}\n<span class="cls">BankAccount</span> acc = <span class="kw">new</span> <span class="cls">BankAccount</span>();\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(acc.<span class="fn">getBalance</span>());`, out:"1000.0"},
+    {code:"static",      desc:"Belongs to the class, not an instance.",
+     syn:`<span class="kw">class</span> <span class="cls">MathUtils</span> {\n    <span class="kw">static double</span> PI = <span class="num">3.14159</span>;\n    <span class="kw">static int</span> <span class="fn">square</span>(<span class="kw">int</span> n) { <span class="kw">return</span> n * n; }\n}\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">MathUtils</span>.<span class="fn">square</span>(<span class="num">6</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">MathUtils</span>.PI);`, out:"36\n3.14159"},
+    {code:"final",       desc:"Prevents modification of variable, method, or class.",
+     syn:`<span class="kw">final int</span> MAX_USERS = <span class="num">100</span>;\n<span class="cm">// MAX_USERS = 200; → compile error</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Max: "</span> + MAX_USERS);`, out:"Max: 100"},
+  ]},
+  { id:"exc", name:"Exception handling", color:"#f87171", tBg:"rgba(248,113,113,0.12)", tC:"#f87171", items:[
+    {code:"try / catch", desc:"Catches errors to prevent crashes.",
+     syn:`<span class="kw">try</span> {\n    <span class="kw">int</span> result = <span class="num">10</span> / <span class="num">0</span>;\n} <span class="kw">catch</span> (<span class="cls">ArithmeticException</span> e) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Caught: "</span> + e.<span class="fn">getMessage</span>());\n}`, out:"Caught: / by zero"},
+    {code:"finally",     desc:"Always runs after try/catch.",
+     syn:`<span class="kw">try</span> {\n    <span class="kw">int</span> x = <span class="cls">Integer</span>.<span class="fn">parseInt</span>(<span class="str">"abc"</span>);\n} <span class="kw">catch</span> (<span class="cls">Exception</span> e) {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Error caught"</span>);\n} <span class="kw">finally</span> {\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Always runs."</span>);\n}`, out:"Error caught\nAlways runs."},
+    {code:"throw",       desc:"Manually triggers an exception.",
+     syn:`<span class="kw">static void</span> <span class="fn">checkAge</span>(<span class="kw">int</span> age) {\n    <span class="kw">if</span> (age < <span class="num">18</span>)\n        <span class="kw">throw new</span> <span class="cls">IllegalArgumentException</span>(<span class="str">"Too young!"</span>);\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Access granted"</span>);\n}\n<span class="fn">checkAge</span>(<span class="num">15</span>);`, out:"Exception: Too young!"},
+    {code:"throws",      desc:"Declares that a method may throw an exception.",
+     syn:`<span class="kw">static void</span> <span class="fn">readFile</span>(<span class="cls">String</span> path) <span class="kw">throws</span> <span class="cls">Exception</span> {\n    <span class="kw">throw new</span> <span class="cls">Exception</span>(<span class="str">"File not found: "</span> + path);\n}\n<span class="kw">try</span> { <span class="fn">readFile</span>(<span class="str">"data.txt"</span>); }\n<span class="kw">catch</span>(<span class="cls">Exception</span> e) { <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(e.<span class="fn">getMessage</span>()); }`, out:"File not found: data.txt"},
+  ]},
+  { id:"col", name:"Collections", color:"#60a5fa", tBg:"rgba(96,165,250,0.12)", tC:"#60a5fa", items:[
+    {code:"ArrayList",   desc:"Resizable ordered list. Fast index access.",
+     syn:`<span class="cls">ArrayList</span><<span class="cls">String</span>> list = <span class="kw">new</span> <span class="cls">ArrayList</span><>();\nlist.<span class="fn">add</span>(<span class="str">"Java"</span>); list.<span class="fn">add</span>(<span class="str">"Python"</span>); list.<span class="fn">add</span>(<span class="str">"C++"</span>);\nlist.<span class="fn">remove</span>(<span class="str">"Python"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(list.<span class="fn">size</span>() + <span class="str">" items: "</span> + list);`, out:"2 items: [Java, C++]"},
+    {code:"LinkedList",  desc:"Node-based list. Fast insert at front/back.",
+     syn:`<span class="cls">LinkedList</span><<span class="cls">String</span>> ll = <span class="kw">new</span> <span class="cls">LinkedList</span><>();\nll.<span class="fn">add</span>(<span class="str">"A"</span>); ll.<span class="fn">addFirst</span>(<span class="str">"Z"</span>); ll.<span class="fn">addLast</span>(<span class="str">"M"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(ll);`, out:"[Z, A, M]"},
+    {code:"HashMap",     desc:"Key-value pairs. Unordered. O(1) lookup.",
+     syn:`<span class="cls">HashMap</span><<span class="cls">String</span>,<span class="cls">Integer</span>> scores = <span class="kw">new</span> <span class="cls">HashMap</span><>();\nscores.<span class="fn">put</span>(<span class="str">"Alice"</span>, <span class="num">95</span>); scores.<span class="fn">put</span>(<span class="str">"Bob"</span>, <span class="num">82</span>);\n<span class="kw">for</span> (<span class="kw">var</span> e : scores.<span class="fn">entrySet</span>())\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(e.<span class="fn">getKey</span>() + <span class="str">": "</span> + e.<span class="fn">getValue</span>());`, out:"Alice: 95\nBob: 82"},
+    {code:"LinkedHashMap",desc:"HashMap that preserves insertion order.",
+     syn:`<span class="cls">LinkedHashMap</span><<span class="cls">String</span>,<span class="cls">Integer</span>> lhm = <span class="kw">new</span> <span class="cls">LinkedHashMap</span><>();\nlhm.<span class="fn">put</span>(<span class="str">"C"</span>,<span class="num">3</span>); lhm.<span class="fn">put</span>(<span class="str">"A"</span>,<span class="num">1</span>); lhm.<span class="fn">put</span>(<span class="str">"B"</span>,<span class="num">2</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(lhm);`, out:"{C=3, A=1, B=2}"},
+    {code:"TreeMap",     desc:"Key-value pairs sorted by key alphabetically.",
+     syn:`<span class="cls">TreeMap</span><<span class="cls">String</span>,<span class="cls">Integer</span>> tm = <span class="kw">new</span> <span class="cls">TreeMap</span><>();\ntm.<span class="fn">put</span>(<span class="str">"Banana"</span>,<span class="num">2</span>); tm.<span class="fn">put</span>(<span class="str">"Apple"</span>,<span class="num">5</span>); tm.<span class="fn">put</span>(<span class="str">"Cherry"</span>,<span class="num">1</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(tm);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"First: "</span> + tm.<span class="fn">firstKey</span>());`, out:"{Apple=5, Banana=2, Cherry=1}\nFirst: Apple"},
+    {code:"HashSet",     desc:"Unique values, unordered, fast lookup.",
+     syn:`<span class="cls">HashSet</span><<span class="cls">String</span>> s = <span class="kw">new</span> <span class="cls">HashSet</span><>();\ns.<span class="fn">add</span>(<span class="str">"Java"</span>); s.<span class="fn">add</span>(<span class="str">"Java"</span>); s.<span class="fn">add</span>(<span class="str">"Python"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(s);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Has Java: "</span> + s.<span class="fn">contains</span>(<span class="str">"Java"</span>));`, out:"[Java, Python]\nHas Java: true"},
+    {code:"LinkedHashSet",desc:"Unique values preserving insertion order.",
+     syn:`<span class="cls">LinkedHashSet</span><<span class="cls">String</span>> lhs = <span class="kw">new</span> <span class="cls">LinkedHashSet</span><>();\nlhs.<span class="fn">add</span>(<span class="str">"C"</span>); lhs.<span class="fn">add</span>(<span class="str">"A"</span>); lhs.<span class="fn">add</span>(<span class="str">"B"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(lhs);`, out:"[C, A, B]"},
+    {code:"TreeSet",     desc:"Unique values sorted in ascending order.",
+     syn:`<span class="cls">TreeSet</span><<span class="cls">Integer</span>> ts = <span class="kw">new</span> <span class="cls">TreeSet</span><>();\nts.<span class="fn">add</span>(<span class="num">5</span>); ts.<span class="fn">add</span>(<span class="num">1</span>); ts.<span class="fn">add</span>(<span class="num">3</span>); ts.<span class="fn">add</span>(<span class="num">1</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(ts);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Min: "</span>+ts.<span class="fn">first</span>()+ <span class="str">" Max: "</span>+ts.<span class="fn">last</span>());`, out:"[1, 3, 5]\nMin: 1 Max: 5"},
+    {code:"Stack",       desc:"LIFO — last in, first out.",
+     syn:`<span class="cls">Stack</span><<span class="cls">Integer</span>> stack = <span class="kw">new</span> <span class="cls">Stack</span><>();\nstack.<span class="fn">push</span>(<span class="num">10</span>); stack.<span class="fn">push</span>(<span class="num">20</span>); stack.<span class="fn">push</span>(<span class="num">30</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Top: "</span> + stack.<span class="fn">peek</span>());\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Popped: "</span> + stack.<span class="fn">pop</span>());\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(stack);`, out:"Top: 30\nPopped: 30\n[10, 20]"},
+    {code:"Queue",       desc:"FIFO — first in, first out.",
+     syn:`<span class="cls">Queue</span><<span class="cls">String</span>> q = <span class="kw">new</span> <span class="cls">LinkedList</span><>();\nq.<span class="fn">offer</span>(<span class="str">"First"</span>); q.<span class="fn">offer</span>(<span class="str">"Second"</span>); q.<span class="fn">offer</span>(<span class="str">"Third"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Front: "</span> + q.<span class="fn">peek</span>());\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Removed: "</span> + q.<span class="fn">poll</span>());\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(q);`, out:"Front: First\nRemoved: First\n[Second, Third]"},
+    {code:"PriorityQueue",desc:"Queue serving smallest element first.",
+     syn:`<span class="cls">PriorityQueue</span><<span class="cls">Integer</span>> pq = <span class="kw">new</span> <span class="cls">PriorityQueue</span><>();\npq.<span class="fn">add</span>(<span class="num">30</span>); pq.<span class="fn">add</span>(<span class="num">10</span>); pq.<span class="fn">add</span>(<span class="num">20</span>);\n<span class="kw">while</span> (!pq.<span class="fn">isEmpty</span>())\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(pq.<span class="fn">poll</span>());`, out:"10\n20\n30"},
+    {code:"ArrayDeque",  desc:"Double-ended queue. Faster than Stack.",
+     syn:`<span class="cls">ArrayDeque</span><<span class="cls">String</span>> dq = <span class="kw">new</span> <span class="cls">ArrayDeque</span><>();\ndq.<span class="fn">addLast</span>(<span class="str">"A"</span>); dq.<span class="fn">addLast</span>(<span class="str">"B"</span>); dq.<span class="fn">addFirst</span>(<span class="str">"Z"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(dq);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"First: "</span>+dq.<span class="fn">pollFirst</span>());`, out:"[Z, A, B]\nFirst: Z"},
+  ]},
+  { id:"bmeth", name:"Built-in methods", color:"#facc15", tBg:"rgba(250,204,21,0.1)", tC:"#ca8a04", items:[
+    {code:"System.out.println()",desc:"Prints with newline.",
+     syn:`<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Line 1"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Line 2"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">print</span>(<span class="str">"No newline"</span>);`, out:"Line 1\nLine 2\nNo newline"},
+    {code:"String methods",     desc:"Common operations on text strings.",
+     syn:`<span class="cls">String</span> s = <span class="str">"  Hello World  "</span>;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(s.<span class="fn">trim</span>());\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(s.<span class="fn">trim</span>().<span class="fn">toLowerCase</span>());\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(s.<span class="fn">trim</span>().<span class="fn">replace</span>(<span class="str">"World"</span>,<span class="str">"Java"</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(s.<span class="fn">trim</span>().<span class="fn">split</span>(<span class="str">" "</span>).length);`, out:"Hello World\nhello world\nHello Java\n2"},
+    {code:"Math methods",       desc:"Mathematical operations built into Java.",
+     syn:`<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Math</span>.<span class="fn">max</span>(<span class="num">10</span>,<span class="num">20</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Math</span>.<span class="fn">min</span>(<span class="num">10</span>,<span class="num">20</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Math</span>.<span class="fn">abs</span>(-<span class="num">15</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Math</span>.<span class="fn">pow</span>(<span class="num">2</span>,<span class="num">8</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Math</span>.<span class="fn">sqrt</span>(<span class="num">144</span>));`, out:"20\n10\n15\n256.0\n12.0"},
+    {code:"Arrays methods",     desc:"Utility methods for arrays.",
+     syn:`<span class="kw">import</span> java.util.<span class="cls">Arrays</span>;\n<span class="kw">int</span>[] nums = {<span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">9</span>};\n<span class="cls">Arrays</span>.<span class="fn">sort</span>(nums);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Arrays</span>.<span class="fn">toString</span>(nums));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Arrays</span>.<span class="fn">binarySearch</span>(nums,<span class="num">8</span>));`, out:"[1, 2, 5, 8, 9]\n3"},
+    {code:"Integer / String conversions",desc:"Convert between types.",
+     syn:`<span class="cls">String</span> s = <span class="str">"42"</span>;\n<span class="kw">int</span> n = <span class="cls">Integer</span>.<span class="fn">parseInt</span>(s);\n<span class="kw">double</span> d = <span class="cls">Double</span>.<span class="fn">parseDouble</span>(<span class="str">"3.14"</span>);\n<span class="cls">String</span> back = <span class="cls">String</span>.<span class="fn">valueOf</span>(n);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(n + <span class="num">8</span> + <span class="str">" | "</span> + back.getClass().<span class="fn">getSimpleName</span>());`, out:"50 | String"},
+  ]},
+  { id:"io", name:"Input / Output", color:"#818cf8", tBg:"rgba(129,140,248,0.12)", tC:"#818cf8", items:[
+    {code:"Scanner",     desc:"Reads user input from the console.",
+     syn:`<span class="cls">Scanner</span> sc = <span class="kw">new</span> <span class="cls">Scanner</span>(<span class="cls">System</span>.in);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">print</span>(<span class="str">"Enter your name: "</span>);\n<span class="cls">String</span> name = sc.<span class="fn">nextLine</span>();\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">print</span>(<span class="str">"Enter your age: "</span>);\n<span class="kw">int</span> age = sc.<span class="fn">nextInt</span>();\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(name + <span class="str">" is "</span> + age);`, out:"Maria is 21"},
+    {code:"FileWriter",  desc:"Writes text to a file.",
+     syn:`<span class="cls">FileWriter</span> fw = <span class="kw">new</span> <span class="cls">FileWriter</span>(<span class="str">"notes.txt"</span>);\nfw.<span class="fn">write</span>(<span class="str">"Java is awesome!\\n"</span>);\nfw.<span class="fn">write</span>(<span class="str">"Keep coding."</span>);\nfw.<span class="fn">close</span>();\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"File written."</span>);`, out:"File written."},
+    {code:"BufferedReader",desc:"Reads text from a file line by line.",
+     syn:`<span class="cls">BufferedReader</span> br = <span class="kw">new</span> <span class="cls">BufferedReader</span>(\n    <span class="kw">new</span> <span class="cls">FileReader</span>(<span class="str">"notes.txt"</span>));\n<span class="cls">String</span> line;\n<span class="kw">while</span> ((line = br.<span class="fn">readLine</span>()) != <span class="kw">null</span>)\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(line);\nbr.<span class="fn">close</span>();`, out:"Java is awesome!\nKeep coding."},
+  ]},
+  { id:"threads", name:"Multithreading", color:"#34d399", tBg:"rgba(52,211,153,0.12)", tC:"#059669", items:[
+    {code:"Thread",      desc:"Creates a separate thread of execution.",
+     syn:`<span class="cls">Thread</span> t = <span class="kw">new</span> <span class="cls">Thread</span>(() -> {\n    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="num">1</span>;i<=<span class="num">3</span>;i++)\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Thread: "</span>+i);\n});\nt.<span class="fn">start</span>();\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Main continues"</span>);`, out:"Main continues\nThread: 1\nThread: 2\nThread: 3"},
+    {code:"sleep()",     desc:"Pauses a thread for a given time (ms).",
+     syn:`<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Start"</span>);\n<span class="cls">Thread</span>.<span class="fn">sleep</span>(<span class="num">1000</span>); <span class="cm">// pause 1 second</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"End (1s later)"</span>);`, out:"Start\nEnd (1s later)"},
+    {code:"synchronized",desc:"Prevents multiple threads from conflicting.",
+     syn:`<span class="kw">class</span> <span class="cls">Counter</span> {\n    <span class="kw">int</span> count = <span class="num">0</span>;\n    <span class="kw">synchronized void</span> <span class="fn">increment</span>() { count++; }\n}`, out:"(thread-safe counter)"},
+  ]},
+  { id:"lambda", name:"Lambda & Streams", color:"#fb7185", tBg:"rgba(251,113,133,0.12)", tC:"#fb7185", items:[
+    {code:"Lambda expression",  desc:"Short anonymous function syntax.",
+     syn:`<span class="cm">// Old way (anonymous class)</span>\n<span class="cls">Runnable</span> r1 = <span class="kw">new</span> <span class="cls">Runnable</span>() {\n    <span class="kw">public void</span> <span class="fn">run</span>() { <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Running"</span>); }\n};\n<span class="cm">// Lambda way</span>\n<span class="cls">Runnable</span> r2 = () -> <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Running"</span>);\nr2.<span class="fn">run</span>();`, out:"Running"},
+    {code:"Stream API",         desc:"Functional-style operations on collections.",
+     syn:`<span class="cls">List</span><<span class="cls">Integer</span>> nums = <span class="cls">List</span>.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>);\nnums.<span class="fn">stream</span>()\n    .<span class="fn">filter</span>(n -> n % <span class="num">2</span> == <span class="num">0</span>)   <span class="cm">// keep evens</span>\n    .<span class="fn">map</span>(n -> n * n)            <span class="cm">// square them</span>\n    .<span class="fn">forEach</span>(<span class="cls">System</span>.<span class="fn">out</span>::<span class="fn">println</span>);`, out:"4\n16\n36"},
+    {code:"Functional interfaces",desc:"Interfaces with a single abstract method.",
+     syn:`<span class="kw">import</span> java.util.function.*;\n<span class="cls">Function</span><<span class="cls">String</span>,<span class="cls">Integer</span>> len = s -> s.<span class="fn">length</span>();\n<span class="cls">Predicate</span><<span class="cls">Integer</span>> isEven = n -> n % <span class="num">2</span> == <span class="num">0</span>;\n<span class="cls">Consumer</span><<span class="cls">String</span>> print = s -> <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(s);\n<span class="fn">print</span>.<span class="fn">accept</span>(<span class="str">"Length: "</span> + len.<span class="fn">apply</span>(<span class="str">"Hello"</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(isEven.<span class="fn">test</span>(<span class="num">4</span>));`, out:"Length: 5\ntrue"},
+  ]},
+  { id:"arrays", name:"Arrays", color:"#38bdf8", tBg:"rgba(56,189,248,0.12)", tC:"#38bdf8", items:[
+    {code:"Declare & initialize",desc:"Create an array with a fixed size or values.",
+     syn:`<span class="cm">// Method 1: declare size, then fill</span>\n<span class="kw">int</span>[] nums = <span class="kw">new</span> <span class="kw">int</span>[<span class="num">5</span>];\nnums[<span class="num">0</span>] = <span class="num">10</span>;\nnums[<span class="num">1</span>] = <span class="num">20</span>;\n\n<span class="cm">// Method 2: shorthand with values</span>\n<span class="kw">int</span>[] scores = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">78</span>, <span class="num">92</span>, <span class="num">88</span>};\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(scores[<span class="num">0</span>]);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(scores.<span class="fn">length</span>);`, out:"90\n5"},
+    {code:"Array length",   desc:"Gets the number of elements in an array.",
+     syn:`<span class="cls">String</span>[] names = {<span class="str">"Ana"</span>, <span class="str">"Ben"</span>, <span class="str">"Cat"</span>};\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Count: "</span> + names.<span class="fn">length</span>);\n\n<span class="cm">// Loop using length</span>\n<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i < names.<span class="fn">length</span>; i++)\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(i + <span class="str">" = "</span> + names[i]);`, out:"Count: 3\n0 = Ana\n1 = Ben\n2 = Cat"},
+    {code:"2D Array",       desc:"Array of arrays — rows and columns (matrix).",
+     syn:`<span class="kw">int</span>[][] grid = {\n    {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>},\n    {<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>},\n    {<span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>}\n};\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(grid[<span class="num">0</span>][<span class="num">2</span>]); <span class="cm">// row 0, col 2</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(grid[<span class="num">2</span>][<span class="num">0</span>]); <span class="cm">// row 2, col 0</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Rows: "</span> + grid.<span class="fn">length</span>);`, out:"3\n7\nRows: 3"},
+    {code:"Array copy",     desc:"Copies array elements to a new array.",
+     syn:`<span class="kw">int</span>[] original = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>};\n<span class="kw">int</span>[] copy = <span class="cls">Arrays</span>.<span class="fn">copyOf</span>(original, <span class="num">3</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Arrays</span>.<span class="fn">toString</span>(copy));\n\n<span class="kw">int</span>[] range = <span class="cls">Arrays</span>.<span class="fn">copyOfRange</span>(original,<span class="num">1</span>,<span class="num">4</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Arrays</span>.<span class="fn">toString</span>(range));`, out:"[1, 2, 3]\n[2, 3, 4]"},
+    {code:"Array fill & sort",desc:"Fill all slots or sort elements.",
+     syn:`<span class="kw">int</span>[] arr = <span class="kw">new</span> <span class="kw">int</span>[<span class="num">5</span>];\n<span class="cls">Arrays</span>.<span class="fn">fill</span>(arr, <span class="num">7</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Arrays</span>.<span class="fn">toString</span>(arr));\n\n<span class="kw">int</span>[] nums = {<span class="num">5</span>,<span class="num">1</span>,<span class="num">9</span>,<span class="num">3</span>,<span class="num">7</span>};\n<span class="cls">Arrays</span>.<span class="fn">sort</span>(nums);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Arrays</span>.<span class="fn">toString</span>(nums));`, out:"[7, 7, 7, 7, 7]\n[1, 3, 5, 7, 9]"},
+  ]},
+  { id:"casting", name:"Type Casting", color:"#fb923c", tBg:"rgba(251,146,60,0.12)", tC:"#fb923c", items:[
+    {code:"Widening (auto)",desc:"Small type to big type — automatic, safe.",
+     syn:`<span class="kw">int</span> myInt = <span class="num">100</span>;\n<span class="kw">double</span> myDouble = myInt;  <span class="cm">// automatic</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(myDouble);\n\n<span class="cm">// byte → short → int → long → float → double</span>\n<span class="kw">byte</span> b = <span class="num">42</span>;\n<span class="kw">long</span> l = b;  <span class="cm">// auto-widens</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(l);`, out:"100.0\n42"},
+    {code:"Narrowing (manual)",desc:"Big type to small type — must cast manually.",
+     syn:`<span class="kw">double</span> myDouble = <span class="num">9.78</span>;\n<span class="kw">int</span> myInt = (<span class="kw">int</span>) myDouble;  <span class="cm">// manual cast</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(myInt);   <span class="cm">// loses decimals!</span>\n\n<span class="kw">int</span> big = <span class="num">300</span>;\n<span class="kw">byte</span> small = (<span class="kw">byte</span>) big;  <span class="cm">// overflows!</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(small);`, out:"9\n44"},
+    {code:"Autoboxing",     desc:"Primitive ↔ wrapper object conversion.",
+     syn:`<span class="cm">// Autoboxing: int → Integer (automatic)</span>\n<span class="cls">Integer</span> a = <span class="num">42</span>;\n\n<span class="cm">// Unboxing: Integer → int (automatic)</span>\n<span class="kw">int</span> b = a;\n\n<span class="cm">// Useful with collections (can't use primitives)</span>\n<span class="cls">ArrayList</span>&lt;<span class="cls">Integer</span>&gt; list = <span class="kw">new</span> <span class="cls">ArrayList</span>&lt;&gt;();\nlist.<span class="fn">add</span>(<span class="num">10</span>);  <span class="cm">// autoboxes int → Integer</span>\n<span class="kw">int</span> val = list.<span class="fn">get</span>(<span class="num">0</span>);  <span class="cm">// unboxes Integer → int</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(val);`, out:"10"},
+    {code:"String ↔ Number",desc:"Convert between String and numeric types.",
+     syn:`<span class="cm">// String to number</span>\n<span class="kw">int</span> n = <span class="cls">Integer</span>.<span class="fn">parseInt</span>(<span class="str">"42"</span>);\n<span class="kw">double</span> d = <span class="cls">Double</span>.<span class="fn">parseDouble</span>(<span class="str">"3.14"</span>);\n\n<span class="cm">// Number to String</span>\n<span class="cls">String</span> s1 = <span class="cls">String</span>.<span class="fn">valueOf</span>(<span class="num">42</span>);\n<span class="cls">String</span> s2 = <span class="cls">Integer</span>.<span class="fn">toString</span>(<span class="num">42</span>);\n<span class="cls">String</span> s3 = <span class="str">""</span> + <span class="num">42</span>;  <span class="cm">// concatenation trick</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(n + d + <span class="str">" | "</span> + s1);`, out:"45.14 | 42"},
+    {code:"char ↔ int",     desc:"Characters have numeric ASCII values.",
+     syn:`<span class="kw">char</span> ch = <span class="str">'A'</span>;\n<span class="kw">int</span> ascii = ch;  <span class="cm">// auto-widens to 65</span>\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(ascii);\n\n<span class="kw">int</span> code = <span class="num">90</span>;\n<span class="kw">char</span> letter = (<span class="kw">char</span>) code;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(letter);`, out:"65\nZ"},
+  ]},
+  { id:"strfmt", name:"String Formatting", color:"#a3e635", tBg:"rgba(163,230,53,0.12)", tC:"#65a30d", items:[
+    {code:"System.out.printf()",desc:"Formatted print — like C-style printf.",
+     syn:`<span class="cls">String</span> name = <span class="str">"Maria"</span>;\n<span class="kw">int</span> age = <span class="num">21</span>;\n<span class="kw">double</span> gpa = <span class="num">3.857</span>;\n\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">printf</span>(<span class="str">"Name: %s\\n"</span>, name);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">printf</span>(<span class="str">"Age: %d\\n"</span>, age);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">printf</span>(<span class="str">"GPA: %.2f\\n"</span>, gpa);`, out:"Name: Maria\nAge: 21\nGPA: 3.86"},
+    {code:"String.format()",desc:"Returns a formatted string (not printed).",
+     syn:`<span class="cls">String</span> msg = <span class="cls">String</span>.<span class="fn">format</span>(<span class="str">"Hi %s, you are %d!"</span>, <span class="str">"Ana"</span>, <span class="num">20</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(msg);\n\n<span class="cls">String</span> price = <span class="cls">String</span>.<span class="fn">format</span>(<span class="str">"Total: $%,.2f"</span>, <span class="num">12500.5</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(price);`, out:"Hi Ana, you are 20!\nTotal: $12,500.50"},
+    {code:"Format specifiers",desc:"Placeholders: %s string, %d int, %f float, %b boolean.",
+     syn:`<span class="cm">// %s  = String</span>\n<span class="cm">// %d  = integer (int, long)</span>\n<span class="cm">// %f  = float/double</span>\n<span class="cm">// %.2f = 2 decimal places</span>\n<span class="cm">// %b  = boolean</span>\n<span class="cm">// %n  = newline (platform-safe)</span>\n<span class="cm">// %10s = right-align, 10 chars wide</span>\n<span class="cm">// %-10s = left-align, 10 chars wide</span>\n\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">printf</span>(<span class="str">"|%-10s|%5d|%8.2f|%n"</span>, <span class="str">"Java"</span>, <span class="num">100</span>, <span class="num">3.14</span>);`, out:"|Java      |  100|    3.14|"},
+    {code:"String concatenation",desc:"Multiple ways to combine strings.",
+     syn:`<span class="cm">// 1. Plus operator</span>\n<span class="cls">String</span> a = <span class="str">"Hello"</span> + <span class="str">" "</span> + <span class="str">"World"</span>;\n\n<span class="cm">// 2. concat()</span>\n<span class="cls">String</span> b = <span class="str">"Hello"</span>.<span class="fn">concat</span>(<span class="str">" World"</span>);\n\n<span class="cm">// 3. StringBuilder (efficient in loops)</span>\n<span class="cls">StringBuilder</span> sb = <span class="kw">new</span> <span class="cls">StringBuilder</span>();\nsb.<span class="fn">append</span>(<span class="str">"Hello"</span>).<span class="fn">append</span>(<span class="str">" "</span>).<span class="fn">append</span>(<span class="str">"World"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(sb.<span class="fn">toString</span>());`, out:"Hello World"},
+  ]},
+  { id:"enums", name:"Enums", color:"#f0abfc", tBg:"rgba(240,171,252,0.12)", tC:"#d946ef", items:[
+    {code:"Basic enum",     desc:"Fixed set of named constants.",
+     syn:`<span class="kw">enum</span> <span class="cls">Day</span> {\n    MON, TUE, WED, THU, FRI, SAT, SUN\n}\n\n<span class="cls">Day</span> today = <span class="cls">Day</span>.WED;\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(today);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(today == <span class="cls">Day</span>.WED);`, out:"WED\ntrue"},
+    {code:"Enum with values",desc:"Enums can hold data via constructors.",
+     syn:`<span class="kw">enum</span> <span class="cls">Planet</span> {\n    MERCURY(<span class="num">3.303e+23</span>), EARTH(<span class="num">5.976e+24</span>), MARS(<span class="num">6.421e+23</span>);\n\n    <span class="kw">final double</span> mass;\n    <span class="cls">Planet</span>(<span class="kw">double</span> mass) { <span class="kw">this</span>.mass = mass; }\n}\n\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="cls">Planet</span>.EARTH.mass);`, out:"5.976E24"},
+    {code:"Enum in switch", desc:"Use enums with switch for clean branching.",
+     syn:`<span class="kw">enum</span> <span class="cls">Status</span> { ACTIVE, PAUSED, STOPPED }\n\n<span class="cls">Status</span> s = <span class="cls">Status</span>.PAUSED;\n<span class="kw">switch</span> (s) {\n    <span class="kw">case</span> ACTIVE:  <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Running"</span>); <span class="kw">break</span>;\n    <span class="kw">case</span> PAUSED:  <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Paused"</span>);  <span class="kw">break</span>;\n    <span class="kw">case</span> STOPPED: <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="str">"Stopped"</span>); <span class="kw">break</span>;\n}`, out:"Paused"},
+    {code:"Enum methods",   desc:"Built-in methods: values(), name(), ordinal().",
+     syn:`<span class="kw">enum</span> <span class="cls">Color</span> { RED, GREEN, BLUE }\n\n<span class="cm">// Loop through all values</span>\n<span class="kw">for</span> (<span class="cls">Color</span> c : <span class="cls">Color</span>.<span class="fn">values</span>())\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(c.<span class="fn">ordinal</span>() + <span class="str">" = "</span> + c.<span class="fn">name</span>());\n\n<span class="cm">// Convert string to enum</span>\n<span class="cls">Color</span> c = <span class="cls">Color</span>.<span class="fn">valueOf</span>(<span class="str">"RED"</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(c);`, out:"0 = RED\n1 = GREEN\n2 = BLUE\nRED"},
+  ]},
+  { id:"generics", name:"Generics", color:"#22d3ee", tBg:"rgba(34,211,238,0.12)", tC:"#06b6d4", items:[
+    {code:"Generic class",  desc:"Class that works with any type using <T>.",
+     syn:`<span class="kw">class</span> <span class="cls">Box</span>&lt;<span class="cls">T</span>&gt; {\n    <span class="cls">T</span> value;\n    <span class="cls">Box</span>(<span class="cls">T</span> value) { <span class="kw">this</span>.value = value; }\n    <span class="cls">T</span> <span class="fn">get</span>() { <span class="kw">return</span> value; }\n}\n\n<span class="cls">Box</span>&lt;<span class="cls">String</span>&gt; sBox = <span class="kw">new</span> <span class="cls">Box</span>&lt;&gt;(<span class="str">"Hello"</span>);\n<span class="cls">Box</span>&lt;<span class="cls">Integer</span>&gt; iBox = <span class="kw">new</span> <span class="cls">Box</span>&lt;&gt;(<span class="num">42</span>);\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(sBox.<span class="fn">get</span>() + <span class="str">" | "</span> + iBox.<span class="fn">get</span>());`, out:"Hello | 42"},
+    {code:"Generic method", desc:"Method that accepts any type as parameter.",
+     syn:`<span class="kw">public static</span> &lt;<span class="cls">T</span>&gt; <span class="kw">void</span> <span class="fn">printArray</span>(<span class="cls">T</span>[] arr) {\n    <span class="kw">for</span> (<span class="cls">T</span> item : arr)\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">print</span>(item + <span class="str">" "</span>);\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>();\n}\n\n<span class="cls">Integer</span>[] nums = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>};\n<span class="cls">String</span>[] words = {<span class="str">"hi"</span>,<span class="str">"bye"</span>};\n<span class="fn">printArray</span>(nums);\n<span class="fn">printArray</span>(words);`, out:"1 2 3 \nhi bye "},
+    {code:"Bounded generics",desc:"Restricts generic type to a specific supertype.",
+     syn:`<span class="cm">// T must be a Number or subclass of Number</span>\n<span class="kw">public static</span> &lt;<span class="cls">T</span> <span class="kw">extends</span> <span class="cls">Number</span>&gt; <span class="kw">double</span> <span class="fn">sum</span>(<span class="cls">T</span> a, <span class="cls">T</span> b) {\n    <span class="kw">return</span> a.<span class="fn">doubleValue</span>() + b.<span class="fn">doubleValue</span>();\n}\n\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="fn">sum</span>(<span class="num">10</span>, <span class="num">20</span>));\n<span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>(<span class="fn">sum</span>(<span class="num">3.14</span>, <span class="num">2.86</span>));\n<span class="cm">// sum("hi", "bye"); → COMPILE ERROR!</span>`, out:"30.0\n6.0"},
+    {code:"Wildcard (?)",   desc:"Unknown type placeholder in generics.",
+     syn:`<span class="kw">import</span> java.util.*;\n\n<span class="cm">// ? accepts any type</span>\n<span class="kw">static void</span> <span class="fn">printList</span>(<span class="cls">List</span>&lt;?&gt; list) {\n    <span class="kw">for</span> (<span class="cls">Object</span> o : list)\n        <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">print</span>(o + <span class="str">" "</span>);\n    <span class="cls">System</span>.<span class="fn">out</span>.<span class="fn">println</span>();\n}\n\n<span class="fn">printList</span>(<span class="cls">List</span>.<span class="fn">of</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>));\n<span class="fn">printList</span>(<span class="cls">List</span>.<span class="fn">of</span>(<span class="str">"a"</span>,<span class="str">"b"</span>));`, out:"1 2 3 \na b "},
+  ]},
+];
+
+/* ===== PROGRAMS ===== */
+const PROG = [
+  { id:"prog-basic", name:"Beginner programs", color:"#4ade80", items:[
+    { name:"Hello World",  diff:"beg", desc:"The first program every programmer writes.", tags:["basics","output"],
+      what:"Prints text to the screen. Every Java program needs a main() method — it's the entry point.",
+      code:`public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+        System.out.println("I am learning Java!");
+    }
+}`,      out:"Hello, World!\nI am learning Java!"},
+    { name:"Simple calculator", diff:"beg", desc:"Performs +, -, *, / on two numbers.", tags:["math","scanner"],
+      what:"Takes two numbers from the user and performs all four arithmetic operations.",
+      code:`import java.util.Scanner;
+
+public class Calculator {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter first number: ");
+        double a = sc.nextDouble();
+
+        System.out.print("Enter second number: ");
+        double b = sc.nextDouble();
+
+        System.out.println("Addition:       " + (a + b));
+        System.out.println("Subtraction:    " + (a - b));
+        System.out.println("Multiplication: " + (a * b));
+        if (b != 0)
+            System.out.println("Division:       " + (a / b));
+        else
+            System.out.println("Division:       Cannot divide by zero");
+    }
+}`,      out:"Enter first number: 10\nEnter second number: 3\nAddition:       13.0\nSubtraction:    7.0\nMultiplication: 30.0\nDivision:       3.3333..."},
+    { name:"Even or odd checker", diff:"beg", desc:"Checks if a number is even or odd.", tags:["if/else","math"],
+      what:"Uses the modulo operator % to check if a number divides evenly by 2.",
+      code:`import java.util.Scanner;
+
+public class EvenOdd {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter a number: ");
+        int num = sc.nextInt();
+
+        if (num % 2 == 0)
+            System.out.println(num + " is EVEN");
+        else
+            System.out.println(num + " is ODD");
+    }
+}`,      out:"Enter a number: 7\n7 is ODD"},
+    { name:"Multiplication table", diff:"beg", desc:"Prints the multiplication table for any number.", tags:["loops","for"],
+      what:"Uses a for loop to iterate from 1 to 10 and print each product.",
+      code:`import java.util.Scanner;
+
+public class MultiTable {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter a number: ");
+        int n = sc.nextInt();
+
+        System.out.println("--- Table of " + n + " ---");
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(n + " x " + i + " = " + (n * i));
+        }
+    }
+}`,      out:"--- Table of 5 ---\n5 x 1 = 5\n5 x 2 = 10\n...\n5 x 10 = 50"},
+    { name:"Grade calculator", diff:"beg", desc:"Converts a numeric score into a letter grade.", tags:["if/else","input"],
+      what:"Reads a score and uses if-else conditions to assign the appropriate letter grade.",
+      code:`import java.util.Scanner;
+
+public class GradeCalc {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter score (0-100): ");
+        int score = sc.nextInt();
+
+        String grade;
+        if (score >= 90)      grade = "A — Excellent!";
+        else if (score >= 80) grade = "B — Good";
+        else if (score >= 70) grade = "C — Average";
+        else if (score >= 60) grade = "D — Below Average";
+        else                  grade = "F — Failed";
+
+        System.out.println("Score: " + score + " → " + grade);
+    }
+}`,      out:"Enter score (0-100): 88\nScore: 88 → B — Good"},
+    { name:"Fibonacci sequence", diff:"beg", desc:"Prints the first N Fibonacci numbers.", tags:["loops","math"],
+      what:"Each Fibonacci number is the sum of the two before it: 0, 1, 1, 2, 3, 5, 8...",
+      code:`import java.util.Scanner;
+
+public class Fibonacci {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("How many Fibonacci numbers? ");
+        int n = sc.nextInt();
+
+        int a = 0, b = 1;
+        System.out.print("Fibonacci: ");
+        for (int i = 0; i < n; i++) {
+            System.out.print(a + " ");
+            int next = a + b;
+            a = b;
+            b = next;
+        }
+    }
+}`,      out:"How many Fibonacci numbers? 8\nFibonacci: 0 1 1 2 3 5 8 13"},
+  ]},
+  { id:"prog-int", name:"Intermediate programs", color:"#facc15", items:[
+    { name:"Student grade manager", diff:"int", desc:"Stores students and their grades in a HashMap.", tags:["HashMap","OOP","collections"],
+      what:"A real-world-style program using classes, HashMap and ArrayList to manage student records.",
+      code:`import java.util.*;
+
+public class GradeManager {
+    static HashMap<String, ArrayList<Integer>> students = new HashMap<>();
+
+    static void addGrade(String name, int grade) {
+        students.putIfAbsent(name, new ArrayList<>());
+        students.get(name).add(grade);
+    }
+
+    static double average(ArrayList<Integer> grades) {
+        int sum = 0;
+        for (int g : grades) sum += g;
+        return (double) sum / grades.size();
+    }
+
+    public static void main(String[] args) {
+        addGrade("Alice", 95); addGrade("Alice", 88); addGrade("Alice", 92);
+        addGrade("Bob",   78); addGrade("Bob",   82); addGrade("Bob",   75);
+        addGrade("Maria", 99); addGrade("Maria", 97); addGrade("Maria", 100);
+
+        System.out.println("=== Grade Report ===");
+        for (var entry : students.entrySet()) {
+            String name = entry.getKey();
+            double avg = average(entry.getValue());
+            String letter = avg >= 90 ? "A" : avg >= 80 ? "B" : "C";
+            System.out.printf("%-8s Avg: %.1f  Grade: %s%n", name, avg, letter);
+        }
+    }
+}`,      out:"=== Grade Report ===\nAlice    Avg: 91.7  Grade: A\nBob      Avg: 78.3  Grade: C\nMaria    Avg: 98.7  Grade: A"},
+    { name:"Bank account system", diff:"int", desc:"Simulates deposit, withdrawal and balance.", tags:["OOP","class","encapsulation"],
+      what:"Demonstrates encapsulation — private fields with public getter/setter methods to protect data.",
+      code:`public class BankAccount {
+    private String owner;
+    private double balance;
+
+    public BankAccount(String owner, double initialBalance) {
+        this.owner = owner;
+        this.balance = initialBalance;
+    }
+
+    public void deposit(double amount) {
+        if (amount <= 0) { System.out.println("Invalid amount."); return; }
+        balance += amount;
+        System.out.printf("Deposited: $%.2f | New balance: $%.2f%n", amount, balance);
+    }
+
+    public void withdraw(double amount) {
+        if (amount > balance) { System.out.println("Insufficient funds."); return; }
+        balance -= amount;
+        System.out.printf("Withdrawn: $%.2f | New balance: $%.2f%n", amount, balance);
+    }
+
+    public void showBalance() {
+        System.out.printf("[%s] Balance: $%.2f%n", owner, balance);
+    }
+
+    public static void main(String[] args) {
+        BankAccount acc = new BankAccount("Maria", 1000.00);
+        acc.showBalance();
+        acc.deposit(500);
+        acc.withdraw(200);
+        acc.withdraw(2000);
+        acc.showBalance();
+    }
+}`,      out:"[Maria] Balance: $1000.00\nDeposited: $500.00 | New balance: $1500.00\nWithdrawn: $200.00 | New balance: $1300.00\nInsufficient funds.\n[Maria] Balance: $1300.00"},
+    { name:"Word frequency counter", diff:"int", desc:"Counts how many times each word appears in text.", tags:["HashMap","String","TreeMap"],
+      what:"Splits a sentence into words and counts occurrences using a HashMap, then sorts with TreeMap.",
+      code:`import java.util.*;
+
+public class WordCounter {
+    public static void main(String[] args) {
+        String text = "the quick brown fox jumps over the lazy dog the fox";
+
+        HashMap<String, Integer> freq = new HashMap<>();
+        for (String word : text.split(" ")) {
+            freq.put(word, freq.getOrDefault(word, 0) + 1);
+        }
+
+        // Sort alphabetically using TreeMap
+        TreeMap<String, Integer> sorted = new TreeMap<>(freq);
+
+        System.out.println("Word Frequencies:");
+        for (var entry : sorted.entrySet()) {
+            System.out.printf("  %-10s : %d%n", entry.getKey(), entry.getValue());
+        }
+    }
+}`,      out:"Word Frequencies:\n  brown      : 1\n  dog        : 1\n  fox        : 2\n  jumps      : 1\n  lazy       : 1\n  over       : 1\n  quick      : 1\n  the        : 3"},
+    { name:"Number guessing game", diff:"int", desc:"A game where the user guesses a random number.", tags:["Scanner","while","Math.random"],
+      what:"Generates a random number and loops until the user guesses correctly, providing hints.",
+      code:`import java.util.Scanner;
+
+public class GuessingGame {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int secret = (int)(Math.random() * 100) + 1;
+        int attempts = 0;
+
+        System.out.println("=== Number Guessing Game ===");
+        System.out.println("I picked a number between 1 and 100.");
+
+        while (true) {
+            System.out.print("Your guess: ");
+            int guess = sc.nextInt();
+            attempts++;
+
+            if (guess < secret)
+                System.out.println("Too low! Try higher.");
+            else if (guess > secret)
+                System.out.println("Too high! Try lower.");
+            else {
+                System.out.println("Correct! You got it in " + attempts + " attempts!");
+                break;
+            }
+        }
+    }
+}`,      out:"=== Number Guessing Game ===\nI picked a number between 1 and 100.\nYour guess: 50\nToo low!\nYour guess: 75\nToo high!\nYour guess: 63\nCorrect! 3 attempts!"},
+    { name:"Bubble sort algorithm", diff:"int", desc:"Sorts an array using the bubble sort algorithm.", tags:["arrays","sorting","loops"],
+      what:"Repeatedly compares adjacent elements and swaps them if out of order until the array is sorted.",
+      code:`import java.util.Arrays;
+
+public class BubbleSort {
+    static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    // Swap
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {64, 34, 25, 12, 22, 11, 90};
+        System.out.println("Before: " + Arrays.toString(nums));
+        bubbleSort(nums);
+        System.out.println("After:  " + Arrays.toString(nums));
+    }
+}`,      out:"Before: [64, 34, 25, 12, 22, 11, 90]\nAfter:  [11, 12, 22, 25, 34, 64, 90]"},
+    { name:"Array statistics calculator",diff:"int", desc:"Finds min, max, sum, and average of an array.", tags:["arrays","import","Arrays","loops"],
+      what:"Shows how to import java.util.Arrays and perform common array operations in one program.",
+      code:`import java.util.Arrays;
+
+public class ArrayStats {
+    public static void main(String[] args) {
+        int[] data = {45, 12, 89, 34, 67, 23, 78, 56, 91, 10};
+
+        // Sort a copy
+        int[] sorted = Arrays.copyOf(data, data.length);
+        Arrays.sort(sorted);
+
+        // Calculate stats
+        int min = sorted[0];
+        int max = sorted[sorted.length - 1];
+        int sum = 0;
+        for (int n : data) sum += n;
+        double avg = (double) sum / data.length;
+
+        // Display
+        System.out.println("Original: " + Arrays.toString(data));
+        System.out.println("Sorted:   " + Arrays.toString(sorted));
+        System.out.printf("Min: %d | Max: %d%n", min, max);
+        System.out.printf("Sum: %d | Avg: %.1f%n", sum, avg);
+    }
+}`,      out:"Original: [45, 12, 89, 34, 67, 23, 78, 56, 91, 10]\nSorted:   [10, 12, 23, 34, 45, 56, 67, 78, 89, 91]\nMin: 10 | Max: 91\nSum: 505 | Avg: 50.5"},
+    { name:"File reader with imports",   diff:"int", desc:"Reads a file using proper imports and exception handling.", tags:["import","java.io","try/catch","BufferedReader"],
+      what:"Shows the complete pattern: import the right classes, handle exceptions, read line by line, and close resources.",
+      code:`import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class FileReaderDemo {
+    public static void main(String[] args) {
+        String filename = "notes.txt";
+
+        try (BufferedReader br = new BufferedReader(
+                new FileReader(filename))) {
+
+            String line;
+            int lineNum = 1;
+            while ((line = br.readLine()) != null) {
+                System.out.printf("%3d | %s%n", lineNum++, line);
+            }
+            System.out.println("--- End of file ---");
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+            System.exit(1);  // exit with error code
+        }
+    }
+}`,      out:"  1 | Java is awesome!\n  2 | Keep coding.\n--- End of file ---"},
+    { name:"Date & time formatter",      diff:"int", desc:"Uses java.time imports to display formatted dates.", tags:["import","java.time","LocalDate","formatter"],
+      what:"Demonstrates java.time.* imports, LocalDate, LocalDateTime, and DateTimeFormatter for clean date handling.",
+      code:`import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class DateTimeDemo {
+    public static void main(String[] args) {
+        LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
+
+        System.out.println("Default: " + today);
+        System.out.println("Full:    " + now);
+
+        DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter fmt2 = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+        DateTimeFormatter fmt3 = DateTimeFormatter.ofPattern("hh:mm a");
+
+        System.out.println("Short:   " + today.format(fmt1));
+        System.out.println("Long:    " + today.format(fmt2));
+        System.out.println("Time:    " + now.format(fmt3));
+    }
+}`,      out:"Default: 2026-03-25\nFull:    2026-03-25T15:47:30.123\nShort:   03/25/2026\nLong:    Wednesday, March 25, 2026\nTime:    03:47 PM"},
+  ]},
+  { id:"prog-adv", name:"Advanced programs", color:"#f97316", items:[
+    { name:"Linked list implementation", diff:"adv", desc:"Builds a singly linked list from scratch.", tags:["OOP","data structures","generics"],
+      what:"A custom linked list using nodes and generics. Real interview-level data structure implementation.",
+      code:`public class MyLinkedList<T> {
+    private class Node {
+        T data;
+        Node next;
+        Node(T data) { this.data = data; }
+    }
+
+    private Node head;
+    private int size;
+
+    public void addFirst(T value) {
+        Node n = new Node(value);
+        n.next = head;
+        head = n;
+        size++;
+    }
+
+    public void addLast(T value) {
+        Node n = new Node(value);
+        if (head == null) { head = n; size++; return; }
+        Node cur = head;
+        while (cur.next != null) cur = cur.next;
+        cur.next = n;
+        size++;
+    }
+
+    public void print() {
+        Node cur = head;
+        System.out.print("[");
+        while (cur != null) {
+            System.out.print(cur.data + (cur.next != null ? " -> " : ""));
+            cur = cur.next;
+        }
+        System.out.println("]  size=" + size);
+    }
+
+    public static void main(String[] args) {
+        MyLinkedList<Integer> list = new MyLinkedList<>();
+        list.addLast(10); list.addLast(20); list.addLast(30);
+        list.addFirst(5);
+        list.print();
+    }
+}`,      out:"[5 -> 10 -> 20 -> 30]  size=4"},
+    { name:"Generic stack",            diff:"adv", desc:"A type-safe stack using Java generics.", tags:["generics","OOP","data structures"],
+      what:"Uses Java generics <T> so the same Stack class can hold integers, strings, or any object.",
+      code:`public class GenericStack<T> {
+    private Object[] data;
+    private int top = -1;
+    private int capacity;
+
+    public GenericStack(int capacity) {
+        this.capacity = capacity;
+        data = new Object[capacity];
+    }
+
+    public void push(T item) {
+        if (top == capacity - 1) { System.out.println("Stack full!"); return; }
+        data[++top] = item;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T pop() {
+        if (top == -1) throw new RuntimeException("Stack empty!");
+        return (T) data[top--];
+    }
+
+    @SuppressWarnings("unchecked")
+    public T peek() { return (T) data[top]; }
+
+    public boolean isEmpty() { return top == -1; }
+    public int size() { return top + 1; }
+
+    public static void main(String[] args) {
+        GenericStack<String> s = new GenericStack<>(5);
+        s.push("Java"); s.push("Python"); s.push("C++");
+        System.out.println("Size: " + s.size());
+        System.out.println("Peek: " + s.peek());
+        System.out.println("Pop:  " + s.pop());
+        System.out.println("Pop:  " + s.pop());
+        System.out.println("Size: " + s.size());
+    }
+}`,      out:"Size: 3\nPeek: C++\nPop:  C++\nPop:  Python\nSize: 1"},
+    { name:"Mini task manager",         diff:"adv", desc:"CRUD app for managing tasks with a menu.", tags:["ArrayList","Scanner","OOP","switch"],
+      what:"A complete mini-application with add, remove, list, and complete operations on tasks.",
+      code:`import java.util.*;
+
+public class TaskManager {
+    static ArrayList<String> tasks = new ArrayList<>();
+    static ArrayList<Boolean> done = new ArrayList<>();
+
+    static void addTask(String t)    { tasks.add(t); done.add(false); System.out.println("Added: " + t); }
+    static void completeTask(int i)  { done.set(i-1, true); System.out.println("Done: " + tasks.get(i-1)); }
+    static void listTasks() {
+        System.out.println("\\n=== Tasks ===");
+        for (int i = 0; i < tasks.size(); i++)
+            System.out.printf("%d. [%s] %s%n", i+1, done.get(i) ? "X" : " ", tasks.get(i));
+    }
+
+    public static void main(String[] args) {
+        // Demo usage
+        addTask("Learn Java basics");
+        addTask("Practice OOP");
+        addTask("Build a project");
+        addTask("Apply for internship");
+        listTasks();
+        completeTask(1);
+        completeTask(3);
+        listTasks();
+    }
+}`,      out:"Added: Learn Java basics\nAdded: Practice OOP\nAdded: Build a project\nAdded: Apply for internship\n\n=== Tasks ===\n1. [ ] Learn Java basics\n2. [ ] Practice OOP\n3. [ ] Build a project\n4. [ ] Apply for internship\nDone: Learn Java basics\nDone: Build a project\n\n=== Tasks ===\n1. [X] Learn Java basics\n2. [ ] Practice OOP\n3. [X] Build a project\n4. [ ] Apply for internship"},
+    { name:"Design patterns — Singleton", diff:"adv", desc:"Ensures only one instance of a class exists.", tags:["design patterns","OOP","static"],
+      what:"The Singleton pattern is used in database connections, config managers, and logging systems.",
+      code:`public class DatabaseConnection {
+    // Only one instance allowed
+    private static DatabaseConnection instance;
+    private String url;
+    private int queryCount = 0;
+
+    // Private constructor — prevents new DatabaseConnection()
+    private DatabaseConnection() {
+        url = "jdbc:mysql://localhost:3306/mydb";
+        System.out.println("DB Connection created.");
+    }
+
+    // Global access point
+    public static DatabaseConnection getInstance() {
+        if (instance == null)
+            instance = new DatabaseConnection();
+        return instance;
+    }
+
+    public void query(String sql) {
+        queryCount++;
+        System.out.println("Query #" + queryCount + ": " + sql);
+    }
+
+    public static void main(String[] args) {
+        DatabaseConnection db1 = DatabaseConnection.getInstance();
+        DatabaseConnection db2 = DatabaseConnection.getInstance();
+
+        System.out.println("Same instance? " + (db1 == db2));
+
+        db1.query("SELECT * FROM users");
+        db2.query("INSERT INTO logs VALUES (...)");
+    }
+}`,      out:"DB Connection created.\nSame instance? true\nQuery #1: SELECT * FROM users\nQuery #2: INSERT INTO logs VALUES (...)"},
+    { name:"Enum-based menu system",    diff:"adv", desc:"Uses enums and switch for a clean menu-driven app.", tags:["enum","switch","Scanner","System.exit"],
+      what:"Demonstrates enums for menu options, System.exit() for quitting, and clean program structure with imports.",
+      code:`import java.util.Scanner;
+
+public class MenuApp {
+    enum MenuOption {
+        GREET, INFO, QUIT;
+
+        static MenuOption fromInt(int n) {
+            return values()[n - 1];
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\\n=== MENU ===");
+            for (MenuOption opt : MenuOption.values())
+                System.out.printf("%d. %s%n", opt.ordinal() + 1, opt.name());
+
+            System.out.print("Choose: ");
+            int choice = sc.nextInt();
+
+            switch (MenuOption.fromInt(choice)) {
+                case GREET: System.out.println("Hello, user!");       break;
+                case INFO:  System.out.println("Java Menu App v1.0"); break;
+                case QUIT:
+                    System.out.println("Goodbye!");
+                    System.exit(0);  // terminates program
+            }
+        }
+    }
+}`,      out:"=== MENU ===\n1. GREET\n2. INFO\n3. QUIT\nChoose: 1\nHello, user!\n\n=== MENU ===\nChoose: 3\nGoodbye!"},
+    { name:"Generic pair class",         diff:"adv", desc:"A reusable Pair<K,V> with generics and type safety.", tags:["generics","OOP","type casting"],
+      what:"Creates a type-safe Pair class that can hold any two types, demonstrating bounded generics and autoboxing.",
+      code:`public class Pair<K, V> {
+    private K key;
+    private V value;
+
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public K getKey()   { return key; }
+    public V getValue() { return value; }
+
+    @Override
+    public String toString() {
+        return key + " = " + value;
+    }
+
+    public static void main(String[] args) {
+        // String + Integer pair
+        Pair<String, Integer> age = new Pair<>("Maria", 21);
+        System.out.println(age);
+
+        // Integer + Double pair
+        Pair<Integer, Double> score = new Pair<>(1, 98.5);
+        System.out.println(score);
+
+        // Access typed values safely
+        String name = age.getKey();     // no casting needed
+        int years = age.getValue();     // auto-unboxing
+        System.out.println(name + " is " + years + " years old");
+    }
+}`,      out:"Maria = 21\n1 = 98.5\nMaria is 21 years old"},
+    { name:"Binary search algorithm",   diff:"adv", desc:"Efficiently searches a sorted array in O(log n).", tags:["algorithms","arrays","recursion"],
+      what:"Binary search halves the search space every step, making it far faster than linear search for large arrays.",
+      code:`public class BinarySearch {
+    // Iterative version
+    static int searchIterative(int[] arr, int target) {
+        int left = 0, right = arr.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (arr[mid] == target) return mid;
+            if (arr[mid] < target)  left  = mid + 1;
+            else                    right = mid - 1;
+        }
+        return -1;
+    }
+
+    // Recursive version
+    static int searchRecursive(int[] arr, int target, int left, int right) {
+        if (left > right) return -1;
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target) return mid;
+        if (arr[mid] < target)  return searchRecursive(arr, target, mid+1, right);
+        return searchRecursive(arr, target, left, mid-1);
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {2, 5, 8, 12, 16, 23, 38, 45, 56, 72, 91};
+        System.out.println("Array: sorted, 11 elements");
+
+        int idx = searchIterative(arr, 23);
+        System.out.println("Search 23 (iterative): index " + idx);
+
+        idx = searchRecursive(arr, 56, 0, arr.length-1);
+        System.out.println("Search 56 (recursive): index " + idx);
+
+        idx = searchIterative(arr, 99);
+        System.out.println("Search 99: " + (idx == -1 ? "not found" : "index " + idx));
+    }
+}`,      out:"Array: sorted, 11 elements\nSearch 23 (iterative): index 5\nSearch 56 (recursive): index 8\nSearch 99: not found"},
+  ]},
+];
+
+/* ===== STATE ===== */
+let mode = "ref";
+let activeId = "all";
+let srchQ = "";
+const openCards = new Set();
+
+/* ===== SIDEBAR BUILD ===== */
+function buildSB() {
+  let h = `<div class="sb-section">Reference</div>
+    <div class="sb-item ${activeId==='all'?'active':''}" onclick="go('all')">
+      <span class="sb-dot" style="background:#f97316"></span>All codes
+      <span class="sb-cnt">${REF.reduce((a,g)=>a+g.items.length,0)}</span>
+    </div>`;
+  for (const g of REF)
+    h += `<div class="sb-item ${activeId===g.id?'active':''}" onclick="go('${g.id}')">
+      <span class="sb-dot" style="background:${g.color}"></span>${g.name}
+      <span class="sb-cnt">${g.items.length}</span>
+    </div>`;
+  h += `<div class="sb-section" style="margin-top:4px">Programs</div>`;
+  for (const p of PROG)
+    h += `<div class="sb-item ${activeId===p.id?'active':''}" onclick="go('${p.id}')">
+      <span class="sb-dot" style="background:${p.color}"></span>${p.name}
+      <span class="sb-cnt">${p.items.length}</span>
+    </div>`;
+  document.getElementById("sbNav").innerHTML = h;
+}
+
+function go(id) {
+  activeId = id;
+  // auto switch mode
+  if (id.startsWith("prog-")) mode = "prog";
+  else if (mode === "prog") mode = "ref";
+  buildSB();
+  render();
+  if (window.innerWidth <= 768) closeSB();
+}
+
+function setMode(m) {
+  mode = m;
+  ["btnRef","btnProg","btnTbl"].forEach(b => document.getElementById(b).classList.remove("active"));
+  document.getElementById(m === "ref" ? "btnRef" : m === "prog" ? "btnProg" : "btnTbl").classList.add("active");
+  render();
+}
+
+function doSearch() {
+  srchQ = document.getElementById("srch").value.toLowerCase();
+  render();
+}
+
+function toggleCard(uid) {
+  openCards.has(uid) ? openCards.delete(uid) : openCards.add(uid);
+  render();
+}
+
+function copyCode(uid, code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.getElementById("cpbtn-"+uid);
+    if (!btn) return;
+    btn.textContent = "Copied!";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
+  });
+}
+
+/* ===== RENDER ===== */
+function getRefFiltered() {
+  return REF.map(g => {
+    if (activeId !== "all" && activeId === g.id || activeId === "all" || (!activeId.startsWith("prog-") && activeId === g.id)) {
+      if (activeId !== "all" && g.id !== activeId) return {...g, items:[]};
+      return {...g, items: g.items.filter(i =>
+        i.code.toLowerCase().includes(srchQ) || i.desc.toLowerCase().includes(srchQ))};
+    }
+    return {...g, items:[]};
+  }).filter(g => g.items.length);
+}
+
+function getProgFiltered() {
+  return PROG.map(g => {
+    const pid = g.id;
+    if (activeId !== "all" && !activeId.startsWith("prog-") && pid !== activeId) return {...g, items:[]};
+    if (activeId.startsWith("prog-") && pid !== activeId) return {...g, items:[]};
+    return {...g, items: g.items.filter(i =>
+      i.name.toLowerCase().includes(srchQ) ||
+      i.desc.toLowerCase().includes(srchQ) ||
+      i.tags.some(t => t.toLowerCase().includes(srchQ)))};
+  }).filter(g => g.items.length);
+}
+
+function render() {
+  const rv = document.getElementById("refView");
+  const pv = document.getElementById("progView");
+  const tv = document.getElementById("tblView");
+  rv.style.display = pv.style.display = tv.style.display = "none";
+
+  const refF = getRefFiltered();
+  const progF = getProgFiltered();
+  const refTotal = refF.reduce((a,g)=>a+g.items.length,0);
+  const progTotal = progF.reduce((a,g)=>a+g.items.length,0);
+  const total = mode === "prog" ? progTotal : refTotal;
+
+  // Stats
+  document.getElementById("statsBar").innerHTML = `
+    <div class="stat"><div class="stat-v" style="color:var(--accent)">${REF.length}</div><div class="stat-l">Reference groups</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--blue)">${REF.reduce((a,g)=>a+g.items.length,0)}</div><div class="stat-l">Total codes</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--green)">${PROG.reduce((a,g)=>a+g.items.length,0)}</div><div class="stat-l">Programs</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--yellow)">${total}</div><div class="stat-l">Showing</div></div>`;
+
+  // Title
+  const grp = [...REF,...PROG].find(g=>g.id===activeId);
+  document.getElementById("tbTitle").innerHTML = activeId==="all"
+    ? `All <span style="color:var(--accent)">Codes</span>`
+    : `<span style="color:${grp?.color||'var(--accent)'}">${grp?.name||''}</span>`;
+  document.getElementById("tbMeta").textContent = `${total} item${total!==1?'s':''} found`;
+
+  // Buttons
+  document.getElementById("btnRef").classList.toggle("active", mode==="ref");
+  document.getElementById("btnProg").classList.toggle("active", mode==="prog");
+  document.getElementById("btnTbl").classList.toggle("active", mode==="tbl");
+
+  if (mode === "ref") { rv.style.display = "block"; renderRef(rv, refF); }
+  else if (mode === "prog") { pv.style.display = "block"; renderProg(pv, progF); }
+  else { tv.style.display = "block"; renderTbl(tv, refF); }
+}
+
+function renderRef(el, filtered) {
+  if (!filtered.length) { el.innerHTML = `<div class="nores">No codes found for "${srchQ}"</div>`; return; }
+  let h = "";
+  for (const g of filtered) {
+    h += `<div style="margin-bottom:32px">
+      <div class="sec-hdr">
+        <span class="sec-dot" style="background:${g.color}"></span>
+        <div><div class="sec-name">${g.name}</div><div class="sec-sub">${g.items.length} codes</div></div>
+      </div>
+      <div class="grid">`;
+    for (const item of g.items) {
+      const uid = g.id+"_"+item.code.replace(/\s+/g,"_");
+      const isOpen = openCards.has(uid);
+      h += `<div class="card ${isOpen?'open':''}" onclick="toggleCard('${uid}')">
+        <div class="card-top">
+          <span class="card-code" style="color:${g.color}">${item.code}</span>
+          <span class="card-tag" style="background:${g.tBg};color:${g.tC}">${g.name}</span>
+        </div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-body">
+          <div class="lbl">Syntax example</div>
+          <div class="codeblock">${item.syn}</div>
+          <div class="lbl">Output</div>
+          <div class="outblock">${item.out}</div>
+        </div>
+        <div class="card-foot">
+          <button class="tog" onclick="event.stopPropagation();toggleCard('${uid}')">
+            ${isOpen?'Hide':'Show'} example <span class="arr">▼</span>
+          </button>
+          <span style="font-size:11px;color:var(--muted)">${isOpen?'collapse':'expand'}</span>
+        </div>
+      </div>`;
+    }
+    h += `</div></div>`;
+  }
+  el.innerHTML = h;
+}
+
+function renderProg(el, filtered) {
+  if (!filtered.length) { el.innerHTML = `<div class="nores">No programs found for "${srchQ}"</div>`; return; }
+  let h = "";
+  for (const g of filtered) {
+    h += `<div style="margin-bottom:32px">
+      <div class="sec-hdr">
+        <span class="sec-dot" style="background:${g.color}"></span>
+        <div><div class="sec-name">${g.name}</div><div class="sec-sub">${g.items.length} programs</div></div>
+      </div>
+      <div class="prog-grid">`;
+    for (const p of g.items) {
+      const uid = g.id+"_"+p.name.replace(/\s+/g,"_");
+      const isOpen = openCards.has(uid);
+      const diffClass = p.diff==="beg"?"diff-beg":p.diff==="int"?"diff-int":"diff-adv";
+      const diffLabel = p.diff==="beg"?"Beginner":p.diff==="int"?"Intermediate":"Advanced";
+      const escaped = p.code.replace(/`/g,"\\`");
+      h += `<div class="prog-card ${isOpen?'open':''}">
+        <div class="prog-head" onclick="toggleCard('${uid}')">
+          <div class="prog-top">
+            <div class="prog-name">${p.name}</div>
+            <span class="prog-diff ${diffClass}">${diffLabel}</span>
+          </div>
+          <div class="prog-desc">${p.desc}</div>
+          <div class="prog-tags">${p.tags.map(t=>`<span class="prog-tag">${t}</span>`).join("")}</div>
+        </div>
+        <div class="prog-body">
+          <div class="prog-what">${p.what}</div>
+          <button class="copy-btn" id="cpbtn-${uid}" onclick="copyCode('${uid}',\`${escaped}\`)">Copy</button>
+          <div class="lbl">Complete program</div>
+          <div class="codeblock">${p.code.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
+          <div class="lbl" style="margin-top:10px">Expected output</div>
+          <div class="outblock">${p.out}</div>
+        </div>
+      </div>`;
+    }
+    h += `</div></div>`;
+  }
+  el.innerHTML = h;
+}
+
+function renderTbl(el, filtered) {
+  if (!filtered.length) { el.innerHTML = `<div class="nores">No codes found for "${srchQ}"</div>`; return; }
+  let h = "";
+  for (const g of filtered) {
+    h += `<div style="margin-bottom:32px">
+      <div class="sec-hdr">
+        <span class="sec-dot" style="background:${g.color}"></span>
+        <div><div class="sec-name">${g.name}</div></div>
+      </div>
+      <div class="tbl-wrap"><table class="ref">
+        <thead><tr><th>Code</th><th>Function</th><th>Output</th></tr></thead>
+        <tbody>`;
+    for (const item of g.items) {
+      h += `<tr>
+        <td style="color:${g.color}">${item.code}</td>
+        <td style="color:var(--muted)">${item.desc}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green)">${item.out.split('\n')[0]}</td>
+      </tr>`;
+    }
+    h += `</tbody></table></div></div>`;
+  }
+  el.innerHTML = h;
+}
+
+function openSB()  { document.getElementById("sidebar").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
+function closeSB() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
+
+buildSB();
+render();
+</script>
+</body>
+</html>
